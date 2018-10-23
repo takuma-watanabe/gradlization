@@ -30,10 +30,7 @@ dependencies {
     compile "org.springframework.boot:spring-boot-starter-tomcat"
     compile "org.springframework.boot:spring-boot-starter-data-jpa"
     compile "mysql:mysql-connector-java:5.1.40"
-    compile "com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.7.0"
     compile "commons-lang:commons-lang:2.4"
-    compile "org.apache.tika:tika-core:1.14"
-    compile "com.amazonaws:aws-java-sdk:1.11.74"
 
     compile "javax.servlet:jstl:1.2"
     compile "org.apache.tomee:javaee-api:7.0"
@@ -42,10 +39,43 @@ dependencies {
     compile "org.apache.geronimo.components:geronimo-jaspi:2.0.0"
 
     compile project(":components:movies")
+    compile project(":components:albums")
 
     testCompile "junit:junit:4.12"
+
+//    setEnvVarRunConfiguration 'move-fan-app', 'vcap.services', '{"aws-s3": [{"credentials": {"access_key_id": "AYRSM0U1UJOWYBJ2JOLO", "bucket": "movie-fun-course", "secret_access_key": "nmZqjzZsyLlMxhpW+mm1jkdeeZWrYxJv6u8hr32j"}, "label": "aws-s3", "name": "moviefun-s3"}]}'
+    
 }
 
 //springBoot {
 //    mainClass = 'org.superbiz.moviefun.Application'
 //}
+
+
+// https://dzone.com/articles/gradle-goodness-passing-environment-variable-via-d
+
+/**
+ * Add environment variable to JavaExec task
+ * configuration created by IntelliJ IDEA
+ * from a Run/Debug configuration.
+ *
+ * @param configuration Name of IntelliJ IDEA Run/Debug configuration
+ * @param envName Name of environment variable
+ * @param envValue Value for environment variable
+ */
+def setEnvVarRunConfiguration(
+        final String configuration,
+        final String envName,
+        final String envValue) {
+    // Find task by type JavaExec and matching
+    // task name for configuration name.
+    final javaExecRunConfiguration = { task ->
+        task instanceof JavaExec && task.name == "run $configuration"
+    }
+
+    tasks.matching(javaExecRunConfiguration).all {
+        // Add environment variable to JavaExec
+        // task configuration.
+        environment envName, envValue
+    }
+}
